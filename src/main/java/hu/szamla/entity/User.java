@@ -2,6 +2,9 @@ package hu.szamla.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,7 +14,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString(exclude = "userRoles")
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
