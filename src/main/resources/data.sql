@@ -6,9 +6,11 @@ VALUES ('ADMIN', 'Adminisztrátor szerepkör'),
 
 -- Felhasználók, jelszó: password
 INSERT INTO users (name, username, password, last_login_date)
-VALUES ('Admin User', 'admin', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW()),
-       ('Accountant User', 'accountant', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW()),
-       ('Regular User', 'user', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW());
+VALUES
+    ('Admin User', 'admin', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW()),
+    ('Accountant User', 'accountant', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW()),
+    ('Regular User', 'user', '$2a$10$EblZqNptyYdbWk6m3vQ9eO8Z0Z1Zz7X1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1Z', NOW())
+ON CONFLICT (username) DO NOTHING;
 
 -- Felhasználók szerepkörei
 INSERT INTO user_roles (user_id, role_id)
