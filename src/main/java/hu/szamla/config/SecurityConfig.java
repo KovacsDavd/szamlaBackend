@@ -26,16 +26,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private final UserService userService;
     private final JwtAuthFilter jwtAuthFilter;
+    private static final String ADMIN = "ADMIN";
+    private static final String ACCOUNTANT = "ACCOUNTANT";
+    private static final String USER = "USER";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/invoices/create").hasAnyAuthority("ADMIN", "ACCOUNTANT")
-                        .requestMatchers("/invoices/**").hasAnyAuthority("USER", "ACCOUNTANT", "ADMIN")
-                        .requestMatchers("/invoices/{id}").hasAnyAuthority("USER", "ACCOUNTANT", "ADMIN")
+                        .requestMatchers("/api/admin/**").hasAnyAuthority(ADMIN)
+                        .requestMatchers("/api/invoices/create").hasAnyAuthority(ADMIN, ACCOUNTANT)
+                        .requestMatchers("/api/invoices/**").hasAnyAuthority(USER, ACCOUNTANT, ADMIN)
+                        .requestMatchers("/api/invoices/{id}").hasAnyAuthority(USER, ACCOUNTANT, ADMIN)
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
