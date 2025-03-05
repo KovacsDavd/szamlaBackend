@@ -1,7 +1,6 @@
 package hu.szamla.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -36,14 +34,14 @@ public class User implements UserDetails {
     private char[] rawPassword;
     private LocalDateTime lastLoginDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream()
                 .map(UserRole::getRole)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

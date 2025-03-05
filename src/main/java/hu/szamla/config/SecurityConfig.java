@@ -37,9 +37,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/admin/**").hasAnyAuthority(ADMIN)
                         .requestMatchers("/api/invoices/create").hasAnyAuthority(ADMIN, ACCOUNTANT)
-                        .requestMatchers("/api/invoices/**").hasAnyAuthority(USER, ACCOUNTANT, ADMIN)
+                        .requestMatchers("/api/invoices").hasAnyAuthority(USER, ACCOUNTANT, ADMIN)
                         .requestMatchers("/api/invoices/{id}").hasAnyAuthority(USER, ACCOUNTANT, ADMIN)
+                        .requestMatchers("/api/home/**").authenticated()
+                        .requestMatchers("/api/auth/validateToken").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/roles").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
@@ -50,7 +53,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("http://localhost:4200");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

@@ -3,10 +3,10 @@ package hu.szamla.service;
 import hu.szamla.controller.dto.*;
 import hu.szamla.entity.Role;
 import hu.szamla.entity.User;
-import hu.szamla.entity.UserRole;
 import hu.szamla.repository.RoleRepository;
 import hu.szamla.repository.UserRepository;
 import hu.szamla.utils.JwtUtils;
+import hu.szamla.utils.MapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,9 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -46,11 +45,11 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(new String(regDTO.getPassword()));
         regDTO.clearPassword();
 
-        User user = dtoToEntity(regDTO, encodedPassword, role);
+        User user = MapperUtils.convertToUser(regDTO, encodedPassword, role);
 
         User savedUser = userRepository.save(user);
 
-        return convertToUserDTO(savedUser);
+        return MapperUtils.convertToUserDTO(savedUser);
     }
 
 
@@ -72,60 +71,21 @@ public class AuthService {
             ));
             loginRequestDTO.clearPassword();
 
-            Set<RoleDTO> roles = convertRolesToDTOs(user.getUserRoles());
+            user.setLastLoginDate(LocalDateTime.now());
+            userRepository.save(user);
+
+            Set<RoleDTO> roles = MapperUtils.convertRolesToDTOs(user.getUserRoles());
 
             String jwt = jwtUtils.generateToken(user);
             LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
             loginResponseDTO.setUsername(user.getUsername());
             loginResponseDTO.setToken(jwt);
             loginResponseDTO.setRoles(roles);
+            loginResponseDTO.setLastLoginDate(user.getLastLoginDate());
 
             return loginResponseDTO;
         } catch (Exception e) {
             throw new EntityNotFoundException("Wrong username or password");
         }
-    }
-
-    private User dtoToEntity(RegDTO regDTO, String encodedPassword, Role role) {
-        User user = new User();
-        user.setUsername(regDTO.getUsername());
-        user.setPassword(encodedPassword);
-        user.setName(regDTO.getName());
-
-        UserRole userRole = new UserRole();
-        userRole.setUser(user);
-        userRole.setRole(role);
-
-        Set<UserRole> userRoles = new HashSet<>();
-        userRoles.add(userRole);
-        user.setUserRoles(userRoles);
-
-        return user;
-    }
-
-    private UserDTO convertToUserDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setName(user.getName());
-        userDTO.setLastLoginDate(user.getLastLoginDate());
-
-        Set<RoleDTO> roles = convertRolesToDTOs(user.getUserRoles());
-
-        userDTO.setRoles(roles);
-
-        return userDTO;
-    }
-
-    private Set<RoleDTO> convertRolesToDTOs(Set<UserRole> userRoles) {
-        return userRoles.stream()
-                .map(userRole -> {
-                    RoleDTO roleDTO = new RoleDTO();
-                    roleDTO.setId(userRole.getRole().getId());
-                    roleDTO.setName(userRole.getRole().getName());
-                    roleDTO.setDescription(userRole.getRole().getDescription());
-                    return roleDTO;
-                })
-                .collect(Collectors.toSet());
     }
 }
