@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-public class LoginResponseDTO {
-    private String token;
+public class HomeDTO {
     private String username;
+    private Set<String> roles;
     private LocalDateTime lastLoginDate;
-    private Set<RoleDTO> roles;
+    private Set<String> menuItems;
 }
