@@ -22,12 +22,15 @@ CREATE TABLE IF NOT EXISTS invoices (
     deadline_date DATE NOT NULL,
     item_name VARCHAR(100) NOT NULL,
     comment TEXT NOT NULL,
-    price DOUBLE PRECISION NOT NULL
+    price DOUBLE PRECISION NOT NULL,
+    CONSTRAINT unique_invoice UNIQUE (customer_name, issue_date, deadline_date, item_name, comment, price)
 );
+
 
 -- Kapcsoló
 CREATE TABLE IF NOT EXISTS user_roles (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE
+    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_role UNIQUE (user_id, role_id)
 );

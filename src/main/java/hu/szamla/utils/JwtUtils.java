@@ -16,7 +16,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtils {
     private final SecretKey secretKey;
-    private static final long EXPIRATION_TIME = 1800L;
+    private static final long EXPIRATION_TIME = 86400000L;
 
     public JwtUtils(@Value("${app.security.secret-key}") String stringSecretKey) {
         byte[] keyBytes = Base64.getDecoder().decode(stringSecretKey.getBytes(StandardCharsets.UTF_8));
