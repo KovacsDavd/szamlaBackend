@@ -6,7 +6,6 @@ import hu.szamla.entity.User;
 import hu.szamla.entity.UserRole;
 import hu.szamla.repository.RoleRepository;
 import hu.szamla.repository.UserRepository;
-import hu.szamla.repository.UserRoleRepository;
 import hu.szamla.utils.MapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -28,7 +27,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final UserRoleRepository userRoleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
